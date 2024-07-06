@@ -1,0 +1,62 @@
+from diffusers import DiffusionPipeline
+pipeline = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2")
+
+pip install diffusers transformers accelerate scipy safetensors
+
+# Ensure necessary libraries are installed
+!pip install diffusers
+!pip install torch
+!pip install transformers
+!pip install accelerate
+!pip install safetensors
+!pip install pillow  # Ensure pillow is installed for image handling
+!pip install matplotlib  # For displaying the image using matplotlib
+
+# Import necessary libraries
+from diffusers import StableDiffusionPipeline, EulerDiscreteScheduler
+import torch
+from PIL import Image
+import matplotlib.pyplot as plt
+
+# Load model and scheduler
+model_id = "stabilityai/stable-diffusion-2"
+
+try:
+    # Use the Euler scheduler here instead
+    scheduler = EulerDiscreteScheduler.from_pretrained(model_id, subfolder="scheduler")
+    pipe = StableDiffusionPipeline.from_pretrained(model_id, scheduler=scheduler, torch_dtype=torch.float16)
+    pipe = pipe.to("cuda")
+    print("Model and scheduler loaded successfully.")
+except Exception as e:
+    print(f"Error loading model or scheduler: {e}")
+
+# Generate the image
+prompt ="A MONKEY RIDING A CAR"
+try:
+    result = pipe(prompt)
+    image = result.images[0]
+    print("Image generated successfully.")
+except Exception as e:
+    print(f"Error generating image: {e}")
+
+# Save and display the image
+try:
+    # Save the image
+    image.save("astronaut_rides_horse.png")
+    print("Image saved successfully.")
+
+    # Display the image using PIL
+    image.show()
+    print("Image displayed using PIL.")
+except Exception as e:
+    print(f"Error saving or displaying image: {e}")
+
+# Alternatively: Display the image using matplotlib
+try:
+    image = image.convert("RGB")
+    plt.imshow(image)
+    plt.axis("off")  # Hide axes for better display
+    plt.show()
+    print("Image displayed using matplotlib.")
+except Exception as e:
+    print(f"Error displaying image with matplotlib: {e}")
